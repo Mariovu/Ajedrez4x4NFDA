@@ -4,26 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a1b58613-4a8e-4cfd-bd00-2940a5b2e221" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mvnw" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mvnw.cmd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/Animaciones.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/ExploradorRutas.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/Movimientos.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/Tablero.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/TableroGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+    <list default="true" id="a1b58613-4a8e-4cfd-bd00-2940a5b2e221" name="Changes" comment="Ajedrez Movimientos Raros">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/ArchivosSalida.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,6 +79,18 @@
       <option name="presentableId" value="Default" />
       <updated>1742675619664</updated>
     </task>
+    <task id="LOCAL-00001" summary="Ajedrez Movimientos Raros">
+      <created>1742871470574</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1742871470574</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Ajedrez Movimientos Raros" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ajedrez Movimientos Raros" />
   </component>
 </project>
