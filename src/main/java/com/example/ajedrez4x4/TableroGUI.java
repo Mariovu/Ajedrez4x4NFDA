@@ -26,11 +26,22 @@ public class TableroGUI extends Application {
     private GridPane tablero;
     private int[] cadenaJugador1, cadenaJugador2;
 
-    private int posicionRealJ1 = 1;  // Inicialmente en casilla 1
+    private int posicionRealJ1 = 1;
     private int posicionRealJ2 = 4;
+
+    // Nuevas constantes para posiciones finales
+    private static final int META_JUGADOR1 = 16;
+    private static final int META_JUGADOR2 = 13;
 
     @Override
     public void start(Stage primaryStage) {
+        inicializarTablero(primaryStage);
+        cargarCadenasIniciales();
+        mostrarVentana(primaryStage);
+        moverPiezas();
+    }
+
+    private void inicializarTablero(Stage stage) {
         tablero = new GridPane();
         tablero.setHgap(2);
         tablero.setVgap(2);
@@ -38,30 +49,35 @@ public class TableroGUI extends Application {
 
         for (int fila = 0; fila < 4; fila++) {
             for (int columna = 0; columna < 4; columna++) {
-                Rectangle casilla = new Rectangle(tamañoCasilla, tamañoCasilla);
-                casilla.setFill((fila + columna) % 2 == 0 ? Color.RED : Color.BLACK);
-                Label numeroCasilla = new Label(String.valueOf(fila * 4 + columna + 1));
-                numeroCasilla.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-                numeroCasilla.setTextFill(Color.WHITE);
-                tablero.add(casilla, columna, fila);
-                tablero.add(numeroCasilla, columna, fila);
+                crearCasilla(fila, columna, tamañoCasilla);
             }
         }
 
-        piezaJugador1 = new Circle(30, Color.WHITE);
-        piezaJugador2 = new Circle(30, Color.BLUE);
-        tablero.add(piezaJugador1, 0, 0);
-        tablero.add(piezaJugador2, 3, 0);
+        piezaJugador1 = crearPieza(Color.WHITE, 0, 0);
+        piezaJugador2 = crearPieza(Color.BLUE, 3, 0);
+    }
 
+    private void crearCasilla(int fila, int columna, int tamaño) {
+        Rectangle casilla = new Rectangle(tamaño, tamaño);
+        casilla.setFill((fila + columna) % 2 == 0 ? Color.RED : Color.BLACK);
+
+        Label numero = new Label(String.valueOf(fila * 4 + columna + 1));
+        numero.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        numero.setTextFill(Color.WHITE);
+
+        tablero.add(casilla, columna, fila);
+        tablero.add(numero, columna, fila);
+    }
+
+    private Circle crearPieza(Color color, int columna, int fila) {
+        Circle pieza = new Circle(30, color);
+        tablero.add(pieza, columna, fila);
+        return pieza;
+    }
+
+    private void cargarCadenasIniciales() {
         cadenaJugador1 = leerCadenaAleatoriaDesdeArchivo("cadenas_ganadoras_jugador1.txt");
         cadenaJugador2 = leerCadenaAleatoriaDesdeArchivo("cadenas_ganadoras_jugador2.txt");
-
-        Scene scene = new Scene(tablero, tamañoCasilla * 4, tamañoCasilla * 4);
-        primaryStage.setTitle("Ajedrez 4x4");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        moverPiezas();
     }
 
     private int[] leerCadenaAleatoriaDesdeArchivo(String archivo) {
@@ -69,217 +85,213 @@ public class TableroGUI extends Application {
         try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
             String linea;
             while ((linea = reader.readLine()) != null) {
-                String[] partes = linea.replace("[", "").replace("]", "").split(", ");
-                int[] cadena = new int[partes.length];
-                for (int i = 0; i < partes.length; i++) {
-                    cadena[i] = Integer.parseInt(partes[i].trim());
-                }
-                cadenas.add(cadena);
+                cadenas.add(parsearRuta(linea));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            mostrarError("Error al leer archivo: " + archivo);
         }
         return cadenas.isEmpty() ? new int[0] : cadenas.get(new Random().nextInt(cadenas.size()));
     }
 
-    private List<Integer> obtenerCasillasAdyacentes(int casillaActual) {
+    private void mostrarVentana(Stage stage) {
+        Scene scene = new Scene(tablero, 80 * 4, 80 * 4);
+        stage.setTitle("Ajedrez 4x4");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private void moverPiezas() {
+        SequentialTransition secuencia = new SequentialTransition();
+        int[][] rutasActuales = {cadenaJugador1.clone(), cadenaJugador2.clone()};
+        int maxMovimientos = calcularMaxMovimientos(rutasActuales);
+
+        for (int turno = 0; turno < maxMovimientos; turno++) {
+            if (verificarEmpate(turno, rutasActuales)) break;
+
+            procesarTurno(turno, rutasActuales, secuencia);
+        }
+
+        secuencia.setOnFinished(e -> mostrarResultadoFinal());
+        secuencia.play();
+    }
+
+    private int calcularMaxMovimientos(int[][] rutas) {
+        return Math.max(rutas[0].length, rutas[1].length);
+    }
+
+    private boolean verificarEmpate(int turno, int[][] rutas) {
+        if (turno > 0 && estaBloqueado(posicionRealJ1, rutas[0], turno, posicionRealJ2) &&
+                estaBloqueado(posicionRealJ2, rutas[1], turno, posicionRealJ1)) {
+            mostrarResultadoFinal(true);
+            return true;
+        }
+        return false;
+    }
+
+    private void procesarTurno(int turno, int[][] rutas, SequentialTransition secuencia) {
+        System.out.printf("\nTurno %d: J1=%d | J2=%d", turno, posicionRealJ1, posicionRealJ2);
+
+        if (turno < rutas[0].length)
+            procesarMovimiento(turno, true, rutas, secuencia);
+
+        if (turno < rutas[1].length)
+            procesarMovimiento(turno, false, rutas, secuencia);
+    }
+
+    private void procesarMovimiento(int turno, boolean esJugador1,
+                                    int[][] rutas, SequentialTransition secuencia) {
+        int jugadorIdx = esJugador1 ? 0 : 1;
+        int posActual = esJugador1 ? posicionRealJ1 : posicionRealJ2;
+        int siguiente = rutas[jugadorIdx][turno];
+
+        if (esMovimientoValido(posActual, siguiente, obtenerPosicionOponente(esJugador1))) {
+            ejecutarMovimiento(esJugador1, posActual, siguiente, secuencia);
+            actualizarPosicion(esJugador1, siguiente);
+        } else {
+            buscarRutaAlternativa(turno, esJugador1, rutas, secuencia);
+        }
+    }
+
+    private boolean esMovimientoValido(int actual, int siguiente, int oponente) {
+        return obtenerCasillasAdyacentes(actual).contains(siguiente) && siguiente != oponente;
+    }
+
+    private List<Integer> obtenerCasillasAdyacentes(int casilla) {
         List<Integer> adyacentes = new ArrayList<>();
-        int fila = (casillaActual - 1) / 4;
-        int columna = (casillaActual - 1) % 4;
+        int fila = (casilla - 1) / 4;
+        int col = (casilla - 1) % 4;
 
         for (int df = -1; df <= 1; df++) {
             for (int dc = -1; dc <= 1; dc++) {
                 if (df == 0 && dc == 0) continue;
-
                 int nuevaFila = fila + df;
-                int nuevaColumna = columna + dc;
-
-                if (nuevaFila >= 0 && nuevaFila < 4 && nuevaColumna >= 0 && nuevaColumna < 4) {
-                    adyacentes.add(nuevaFila * 4 + nuevaColumna + 1);
+                int nuevaCol = col + dc;
+                if (nuevaFila >= 0 && nuevaFila < 4 && nuevaCol >= 0 && nuevaCol < 4) {
+                    adyacentes.add(nuevaFila * 4 + nuevaCol + 1);
                 }
             }
         }
         return adyacentes;
     }
 
-    private boolean esMovimientoValido(int actual, int siguiente) {
-        return obtenerCasillasAdyacentes(actual).contains(siguiente);
-    }
-
-    private TranslateTransition crearTransicion(Circle pieza, int casillaInicial, int casillaFinal) {
-        int filaInicial = (casillaInicial - 1) / 4;
-        int columnaInicial = (casillaInicial - 1) % 4;
-        int filaFinal = (casillaFinal - 1) / 4;
-        int columnaFinal = (casillaFinal - 1) % 4;
-
-        TranslateTransition transicion = new TranslateTransition(Duration.seconds(0.5), pieza);
-        transicion.setByX((columnaFinal - columnaInicial) * (tablero.getHgap() + 80));
-        transicion.setByY((filaFinal - filaInicial) * (tablero.getVgap() + 80));
-        return transicion;
-    }
-
-    private void moverPiezas() {
-        SequentialTransition secuencia = new SequentialTransition();
-        int maxMovimientos = Math.max(cadenaJugador1.length, cadenaJugador2.length);
-
-        final boolean[] empate = {false};
-        final int[][] rutasActuales = {cadenaJugador1.clone(), cadenaJugador2.clone()};
-
-        for (int i = 0; i < maxMovimientos && !empate[0]; i++) {
-            System.out.printf("\nTurno %d: J1=%d (meta: %d) | J2=%d (meta: %d)",
-                    i, posicionRealJ1, rutasActuales[0][i],
-                    posicionRealJ2, rutasActuales[1][i]);
-
-            if (i < rutasActuales[0].length) {
-                procesarMovimiento(i, true, rutasActuales, secuencia);
-            }
-
-            if (i < rutasActuales[1].length) {
-                procesarMovimiento(i, false, rutasActuales, secuencia);
-            }
-
-            if (i > 0 && estaBloqueado(posicionRealJ1, rutasActuales[0], i, posicionRealJ2) &&
-                    estaBloqueado(posicionRealJ2, rutasActuales[1], i, posicionRealJ1)) {
-                empate[0] = true;
-                System.out.println("\n¡Empate detectado!");
-            }
-        }
-
-        secuencia.setOnFinished(e -> mostrarResultadoFinal(posicionRealJ1, posicionRealJ2, empate[0]));
-        secuencia.play();
-    }
-
-    private void procesarMovimiento(int turno, boolean esJugador1,
-                                    int[][] rutasActuales, SequentialTransition secuencia) {
-        int jugadorIdx = esJugador1 ? 0 : 1;
-        int posicionActual = esJugador1 ? posicionRealJ1 : posicionRealJ2;
-        int posicionOponente = esJugador1 ? posicionRealJ2 : posicionRealJ1;
-        int siguienteCasilla = rutasActuales[jugadorIdx][turno];
+    private void ejecutarMovimiento(boolean esJugador1, int desde, int hasta,
+                                    SequentialTransition secuencia) {
         Circle pieza = esJugador1 ? piezaJugador1 : piezaJugador2;
+        secuencia.getChildren().addAll(
+                crearTransicion(pieza, desde, hasta),
+                new PauseTransition(Duration.seconds(0.5))
+        );
+        System.out.printf("\n%s: %d → %d", esJugador1 ? "J1" : "J2", desde, hasta);
+    }
 
-        if (siguienteCasilla < 1 || siguienteCasilla > 16) {
-            System.out.printf("\n%s intenta moverse a casilla inválida %d", esJugador1 ? "J1" : "J2", siguienteCasilla);
-            buscarRutaAlternativa(turno, esJugador1, rutasActuales, secuencia);
-            return;
-        }
+    private TranslateTransition crearTransicion(Circle pieza, int desde, int hasta) {
+        int[] coordenadasDesde = calcularCoordenadas(desde);
+        int[] coordenadasHasta = calcularCoordenadas(hasta);
 
-        if (esMovimientoValido(posicionActual, siguienteCasilla) &&
-                siguienteCasilla != posicionOponente) {
-            secuencia.getChildren().addAll(
-                    crearTransicion(pieza, posicionActual, siguienteCasilla),
-                    new PauseTransition(Duration.seconds(0.5))
-            );
-            if (esJugador1) {
-                posicionRealJ1 = siguienteCasilla;
-            } else {
-                posicionRealJ2 = siguienteCasilla;
-            }
-            System.out.printf("\n%s se mueve a %d", esJugador1 ? "J1" : "J2", siguienteCasilla);
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.5), pieza);
+        tt.setByX((coordenadasHasta[1] - coordenadasDesde[1]) * 82);
+        tt.setByY((coordenadasHasta[0] - coordenadasDesde[0]) * 82);
+        return tt;
+    }
+
+    private int[] calcularCoordenadas(int casilla) {
+        return new int[]{(casilla - 1) / 4, (casilla - 1) % 4};
+    }
+
+    private void actualizarPosicion(boolean esJugador1, int nuevaPosicion) {
+        if (esJugador1) {
+            posicionRealJ1 = nuevaPosicion;
         } else {
-            buscarRutaAlternativa(turno, esJugador1, rutasActuales, secuencia);
+            posicionRealJ2 = nuevaPosicion;
         }
     }
 
     private void buscarRutaAlternativa(int turno, boolean esJugador1,
-                                       int[][] rutasActuales, SequentialTransition secuencia) {
-        try {
-            String archivo = esJugador1 ? "cadenas_ganadoras_jugador1.txt" : "cadenas_ganadoras_jugador2.txt";
-            int jugadorIdx = esJugador1 ? 0 : 1;
-            int posicionActual = esJugador1 ? posicionRealJ1 : posicionRealJ2;
-            int posicionOponente = esJugador1 ? posicionRealJ2 : posicionRealJ1;
+                                       int[][] rutas, SequentialTransition secuencia) {
+        String archivo = esJugador1 ? "cadenas_ganadoras_jugador1.txt" : "cadenas_ganadoras_jugador2.txt";
+        int jugadorIdx = esJugador1 ? 0 : 1;
+        int posActual = esJugador1 ? posicionRealJ1 : posicionRealJ2;
 
-            List<int[]> rutasValidas = new ArrayList<>();
-            try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
-                String linea;
-                while ((linea = br.readLine()) != null) {
-                    int[] ruta = parsearRuta(linea);
-                    if (ruta.length > turno && ruta[turno] == posicionActual) {
-                        if (ruta.length > turno + 1) {
-                            int siguienteCasilla = ruta[turno + 1];
-                            if (siguienteCasilla >= 1 && siguienteCasilla <= 16 &&
-                                    esMovimientoValido(posicionActual, siguienteCasilla) &&
-                                    siguienteCasilla != posicionOponente) {
-                                rutasValidas.add(ruta);
-                            }
-                        }
-                    }
-                }
+        int[] nuevaRuta = ExploradorRutas.encontrarRutaAlternativaCompleta(
+                turno, posActual, obtenerPosicionOponente(esJugador1), archivo
+        );
+
+        if (nuevaRuta != null && nuevaRuta.length > turno) {
+            rutas[jugadorIdx] = nuevaRuta;
+            int siguiente = nuevaRuta[turno];
+
+            if (esMovimientoValido(posActual, siguiente, obtenerPosicionOponente(esJugador1))) {
+                ejecutarMovimiento(esJugador1, posActual, siguiente, secuencia);
+                actualizarPosicion(esJugador1, siguiente);
+                System.out.printf("\n%s nueva ruta: %s", esJugador1 ? "J1" : "J2", Arrays.toString(nuevaRuta));
             }
-
-            if (!rutasValidas.isEmpty()) {
-                int[] nuevaRuta = rutasValidas.get(new Random().nextInt(rutasValidas.size()));
-                System.arraycopy(nuevaRuta, 0, rutasActuales[jugadorIdx], 0,
-                        Math.min(nuevaRuta.length, rutasActuales[jugadorIdx].length));
-
-                int siguienteCasilla = nuevaRuta[turno + 1];
-                Circle pieza = esJugador1 ? piezaJugador1 : piezaJugador2;
-
-                secuencia.getChildren().addAll(
-                        crearTransicion(pieza, posicionActual, siguienteCasilla),
-                        new PauseTransition(Duration.seconds(0.5))
-                );
-
-                if (esJugador1) {
-                    posicionRealJ1 = siguienteCasilla;
-                } else {
-                    posicionRealJ2 = siguienteCasilla;
-                }
-                System.out.printf("\n%s usa ruta alternativa: %s", esJugador1 ? "J1" : "J2",
-                        Arrays.toString(nuevaRuta));
-            } else {
-                System.out.printf("\n%s no tiene movimientos válidos desde %d",
-                        esJugador1 ? "J1" : "J2", posicionActual);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            System.out.printf("\n%s sin movimientos válidos", esJugador1 ? "J1" : "J2");
         }
     }
 
-    private int[] parsearRuta(String linea) {
-        String[] partes = linea.replace("[", "").replace("]", "").split(", ");
-        int[] ruta = new int[partes.length];
-        for (int i = 0; i < partes.length; i++) {
-            ruta[i] = Integer.parseInt(partes[i].trim());
-        }
-        return ruta;
+    private int obtenerPosicionOponente(boolean esJugador1) {
+        return esJugador1 ? posicionRealJ2 : posicionRealJ1;
     }
 
-    private boolean estaBloqueado(int posicion, int[] ruta, int turno, int posOponente) {
+    private boolean estaBloqueado(int posicion, int[] ruta, int turno, int oponente) {
         if (turno >= ruta.length) return true;
 
-        boolean movimientoInvalido = !esMovimientoValido(posicion, ruta[turno]) ||
-                ruta[turno] == posOponente;
+        boolean movimientoInvalido = !esMovimientoValido(posicion, ruta[turno], oponente);
+        boolean sinAlternativas = obtenerCasillasAdyacentes(posicion).stream()
+                .noneMatch(c -> c != oponente && Tablero.obtenerColor(c) == obtenerColorSiguiente(ruta, turno));
 
-        boolean tieneMovimientosPosibles = obtenerCasillasAdyacentes(posicion).stream()
-                .anyMatch(casilla -> casilla != posOponente &&
-                        Tablero.obtenerColor(casilla) == obtenerColorSiguiente(ruta, turno));
-
-        return movimientoInvalido && !tieneMovimientosPosibles;
+        return movimientoInvalido && sinAlternativas;
     }
 
     private char obtenerColorSiguiente(int[] ruta, int turno) {
         return (turno < ruta.length - 1) ? Tablero.obtenerColor(ruta[turno + 1]) : 'r';
     }
 
-    private void mostrarResultadoFinal(int posJ1, int posJ2, boolean empate) {
+    private void mostrarResultadoFinal() {
+        mostrarResultadoFinal(false);
+    }
+
+    private void mostrarResultadoFinal(boolean empate) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Fin del juego");
             alert.setHeaderText(null);
 
+            String mensaje;
             if (empate) {
-                alert.setContentText("¡Empate! Ambos jugadores están bloqueados");
-            } else if (posJ1 == 16) {
-                alert.setContentText("¡Ganó Jugador 1!");
-            } else if (posJ2 == 13) {
-                alert.setContentText("¡Ganó Jugador 2!");
+                mensaje = "¡Empate! Ambos jugadores bloqueados";
+            } else if (posicionRealJ1 == META_JUGADOR1) {
+                mensaje = "¡Ganó Jugador 1!";
+            } else if (posicionRealJ2 == META_JUGADOR2) {
+                mensaje = "¡Ganó Jugador 2!";
             } else {
-                alert.setContentText("¡Juego terminado sin ganador!");
+                mensaje = "¡Juego terminado sin ganador!";
             }
 
+            alert.setContentText(mensaje);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.show();
         });
+    }
+
+    private void mostrarError(String mensaje) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText(mensaje);
+            alert.showAndWait();
+        });
+    }
+
+    private int[] parsearRuta(String linea) {
+        String[] partes = linea.replaceAll("[\\[\\]]", "").split(", ");
+        int[] ruta = new int[partes.length];
+        for (int i = 0; i < partes.length; i++) {
+            ruta[i] = Integer.parseInt(partes[i].trim());
+        }
+        return ruta;
     }
 
     public static void main(String[] args) {
