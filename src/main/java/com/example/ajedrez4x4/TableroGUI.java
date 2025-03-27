@@ -281,8 +281,4 @@ public class TableroGUI extends Application {
             alert.show();
         });
     }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 }

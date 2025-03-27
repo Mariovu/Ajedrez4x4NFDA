@@ -5,11 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1b58613-4a8e-4cfd-bd00-2940a5b2e221" name="Changes" comment="Ajedrez Movimientos Raros">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/AutomataGrafico.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cadenas_ganadoras_jugador1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cadenas_ganadoras_jugador1.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cadenas_ganadoras_jugador2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cadenas_ganadoras_jugador2.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/ExploradorRutas.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/ExploradorRutas.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/TableroGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/TableroGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todos_los_caminos_jugador1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todos_los_caminos_jugador1.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todos_los_caminos_jugador2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todos_los_caminos_jugador2.txt" afterDir="false" />
     </list>
@@ -42,7 +45,7 @@
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Application.TableroGUI">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.example.ajedrez4x4.Main" />
       <module name="Ajedrez4x4" />
@@ -71,8 +74,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.TableroGUI" />
         <item itemvalue="Application.Main" />
+        <item itemvalue="Application.TableroGUI" />
       </list>
     </recent_temporary>
   </component>
