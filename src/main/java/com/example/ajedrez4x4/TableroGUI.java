@@ -224,8 +224,6 @@ public class TableroGUI extends Application {
                 } else {
                     posicionRealJ2 = siguienteCasilla;
                 }
-                System.out.printf("\n%s usa ruta alternativa: %s", esJugador1 ? "J1" : "J2",
-                        Arrays.toString(nuevaRuta));
             } else {
                 System.out.printf("\n%s no tiene movimientos válidos desde %d",
                         esJugador1 ? "J1" : "J2", posicionActual);

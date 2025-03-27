@@ -36,3 +36,24 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+/cadenas_ganadoras_jugador1.txt
+/cadenas_ganadoras_jugador2.txt
+
+/todos_los_caminos_jugador1.txt
+/todos_los_caminos_jugador2.txt
+*.txt
+todos_los_caminos_jugador2.txt
+todos_los_caminos_jugador1.txt
+cadenas_ganadoras_jugador2.txt
+cadenas_ganadoras_jugador1.txt
+cadenas_ganadoras_jugador1.txt
+cadenas_ganadoras_jugador2.txt
+todos_los_caminos_jugador1.txt
+todos_los_caminos_jugador2.txt
+*.txt
+cadenas_ganadoras_jugador2.txt
+*.txt
+todos_los_caminos_jugador1.txt
+cadenas_ganadoras_jugador1.txt
+cadenas_ganadoras_jugador2.txt

@@ -4,90 +4,49 @@ import java.io.*;
 import java.util.*;
 
 public class ExploradorRutas {
-    private static final Random random = new Random();
 
     public static void explorarRutasJugador1(String cadena, String archivoSalida) {
-        explorarRutas(cadena, archivoSalida, 1, 16);
+        procesarRutasNoDeterministas(cadena, archivoSalida, 1);
     }
 
     public static void explorarRutasJugador2(String cadena, String archivoSalida) {
-        explorarRutas(cadena, archivoSalida, 4, 13);
+        procesarRutasNoDeterministas(cadena, archivoSalida, 4);
     }
 
-    private static void explorarRutas(String cadena, String archivoSalida, int casillaInicial, int casillaFinal) {
-        try (FileWriter writer = new FileWriter(archivoSalida)) {
-            Queue<List<Integer>> cola = new LinkedList<>();
-            cola.add(Arrays.asList(casillaInicial));
+    private static void procesarRutasNoDeterministas(String cadena, String archivoSalida, int inicio) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoSalida))) {
+            Queue<Estado> cola = new LinkedList<>();
+            cola.add(new Estado(inicio, 0, null));
 
-            for (int i = 0; i < cadena.length(); i++) {
-                char color = cadena.charAt(i);
+            while (!cola.isEmpty()) {
                 int nivelSize = cola.size();
 
-                for (int j = 0; j < nivelSize; j++) {
-                    List<Integer> ruta = cola.poll();
-                    int ultimaCasilla = ruta.get(ruta.size() - 1);
+                for (int i = 0; i < nivelSize; i++) {
+                    Estado actual = cola.poll();
 
-                    for (int movimiento : Movimientos.movimientosValidos(ultimaCasilla, color, -1)) {
-                        List<Integer> nuevaRuta = new ArrayList<>(ruta);
-                        nuevaRuta.add(movimiento);
-                        cola.add(nuevaRuta);
+                    if (actual.paso == cadena.length()) {
+                        escribirRuta(actual, writer);
+                    } else {
+                        char color = cadena.charAt(actual.paso);
+                        for (int movimiento : Movimientos.movimientosValidos(actual.posicion, color, -1)) {
+                            Estado nuevo = new Estado(movimiento, actual.paso + 1, actual);
+                            cola.add(nuevo);
+                        }
                     }
                 }
             }
-
-            for (List<Integer> ruta : cola) {
-                writer.write(ruta.toString() + "\n");
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void escribirArchivo(String archivo, List<List<Integer>> rutas) {
-        try (FileWriter writer = new FileWriter(archivo)) {
-            for (List<Integer> ruta : rutas) {
-                writer.write(ruta.toString() + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    private static void escribirRuta(Estado estado, BufferedWriter writer) throws IOException {
+        LinkedList<Integer> ruta = new LinkedList<>();
+        while (estado != null) {
+            ruta.addFirst(estado.posicion);
+            estado = estado.padre;
         }
-    }
-
-    public static int[] getRutaAlternativa(int turnoActual, int posicionActual,
-                                           String archivoGanadoras, int posicionOponente) {
-        List<int[]> rutasValidas = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(archivoGanadoras))) {
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                int[] ruta = parsearRuta(linea);
-                if (validarRuta(turnoActual, posicionActual, posicionOponente, ruta)) {
-                    rutasValidas.add(ruta);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return rutasValidas.isEmpty() ? null : rutasValidas.get(random.nextInt(rutasValidas.size()));
-    }
-
-    private static boolean validarRuta(int turno, int actual, int oponente, int[] ruta) {
-        return ruta.length > turno && ruta[turno] == actual && !contieneOponente(ruta, turno, oponente);
-    }
-
-    private static boolean contieneOponente(int[] ruta, int desde, int oponente) {
-        for (int i = desde; i < ruta.length; i++) {
-            if (ruta[i] == oponente) return true;
-        }
-        return false;
-    }
-
-    private static int[] parsearRuta(String linea) {
-        return Arrays.stream(linea.replaceAll("[\\[\\]]", "").split(", "))
-                .mapToInt(Integer::parseInt)
-                .toArray();
+        writer.write(ruta.toString());
+        writer.newLine();
     }
 }
-
-
