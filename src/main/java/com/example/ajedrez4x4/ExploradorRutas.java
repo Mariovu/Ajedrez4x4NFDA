@@ -24,12 +24,12 @@ public class ExploradorRutas {
                 for (int i = 0; i < nivelSize; i++) {
                     Estado actual = cola.poll();
 
-                    if (actual.paso == cadena.length()) {
+                    if (actual.turno == cadena.length()) {
                         escribirRuta(actual, writer);
                     } else {
-                        char color = cadena.charAt(actual.paso);
+                        char color = cadena.charAt(actual.turno);
                         for (int movimiento : Movimientos.movimientosValidos(actual.posicion, color, -1)) {
-                            Estado nuevo = new Estado(movimiento, actual.paso + 1, actual);
+                            Estado nuevo = new Estado(movimiento, actual.turno + 1, actual);
                             cola.add(nuevo);
                         }
                     }
