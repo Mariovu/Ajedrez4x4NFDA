@@ -26,7 +26,7 @@ public class TableroGUI extends Application {
     private GridPane tablero;
     private int[] cadenaJugador1, cadenaJugador2;
 
-    private int posicionRealJ1 = 1;  // Inicialmente en casilla 1
+    private int posicionRealJ1 = 1;
     private int posicionRealJ2 = 4;
 
     @Override
@@ -79,7 +79,7 @@ public class TableroGUI extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return cadenas.isEmpty() ? new int[0] : cadenas.get(new Random().nextInt(cadenas.size()));
+        return cadenas.isEmpty() ? new int[0] : cadenas.get(new Random().nextInt(cadenas.size())); // Elige Cadena Aleatoria o regresa la unica cadena
     }
 
     private List<Integer> obtenerCasillasAdyacentes(int casillaActual) {

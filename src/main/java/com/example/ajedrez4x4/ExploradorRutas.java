@@ -16,7 +16,7 @@ public class ExploradorRutas {
     private static void procesarRutasNoDeterministas(String cadena, String archivoSalida, int inicio) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoSalida))) {
             Queue<Estado> cola = new LinkedList<>();
-            cola.add(new Estado(inicio, 0, null));
+            cola.add(new Estado(inicio, 0, null)); //[ Estado(1, 0, null) ]
 
             while (!cola.isEmpty()) {
                 int nivelSize = cola.size();
@@ -29,7 +29,7 @@ public class ExploradorRutas {
                     } else {
                         char color = cadena.charAt(actual.turno);
                         for (int movimiento : Movimientos.movimientosValidos(actual.posicion, color, -1)) {
-                            Estado nuevo = new Estado(movimiento, actual.turno + 1, actual);
+                            Estado nuevo = new Estado(movimiento, actual.turno + 1, actual); //Ejemplo: [ Estado(2, 1, padre1), Estado(5, 1, padre1), Estado(6, 1, padre1) ]
                             cola.add(nuevo);
                         }
                     }

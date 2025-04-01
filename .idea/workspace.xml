@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1b58613-4a8e-4cfd-bd00-2940a5b2e221" name="Changes" comment="Ajedrez No Deterministico Terminado">
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/Estado.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/Estado.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cadenas_ganadoras_jugador1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cadenas_ganadoras_jugador1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cadenas_ganadoras_jugador2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cadenas_ganadoras_jugador2.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/ExploradorRutas.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/ExploradorRutas.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/TableroGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/TableroGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todos_los_caminos_jugador1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todos_los_caminos_jugador1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todos_los_caminos_jugador2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todos_los_caminos_jugador2.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,13 +36,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "last_opened_file_path": "E:/Program Files/Seguro/JavaProyectos/Ajedrez4x4"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.example.ajedrez4x4.Main" />
