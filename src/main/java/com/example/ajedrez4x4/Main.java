@@ -57,7 +57,7 @@ public class Main {
     }
 
     private static void iniciarJuegoAutomatico() {
-        System.out.println("\n--- MODO AUTOMÁTICO ---");
+        System.out.println("\n--- MODO AUTOMÁTICO --");
         Random rand = new Random();
         int longitud = 3 + rand.nextInt(18); //
 
