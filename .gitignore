@@ -1,63 +1,6 @@
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
-*.iml
-*.ipr
-
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-
-### Mac OS ###
-.DS_Store
-
-/cadenas_ganadoras_jugador1.txt
-/cadenas_ganadoras_jugador2.txt
-
-/todos_los_caminos_jugador1.txt
-/todos_los_caminos_jugador2.txt
+# Ignorar todos los archivos .txt
 *.txt
-todos_los_caminos_jugador2.txt
-todos_los_caminos_jugador1.txt
-cadenas_ganadoras_jugador2.txt
-cadenas_ganadoras_jugador1.txt
-cadenas_ganadoras_jugador1.txt
-cadenas_ganadoras_jugador2.txt
-todos_los_caminos_jugador1.txt
-todos_los_caminos_jugador2.txt
-*.txt
-cadenas_ganadoras_jugador2.txt
-*.txt
-todos_los_caminos_jugador1.txt
-cadenas_ganadoras_jugador1.txt
-cadenas_ganadoras_jugador2.txt
-cadenas_ganadoras_jugador1.txt
-todos_los_caminos_jugador1.txt
-todos_los_caminos_jugador2.txt
-cadenas_ganadoras_jugador2.txt
+
+# Excluir la carpeta java de las reglas de exclusión
+!**/src/main/java/**
+!**/src/test/java/**
