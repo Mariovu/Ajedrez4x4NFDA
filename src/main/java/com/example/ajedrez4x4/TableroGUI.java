@@ -120,32 +120,47 @@ public class TableroGUI extends Application {
 
     private void moverPiezas() {
         SequentialTransition secuencia = new SequentialTransition();
-        int maxMovimientos = Math.max(cadenaJugador1.length, cadenaJugador2.length);
-
         final boolean[] empate = {false};
         final int[][] rutasActuales = {cadenaJugador1.clone(), cadenaJugador2.clone()};
 
-        for (int i = 0; i < maxMovimientos && !empate[0]; i++) {
-            System.out.printf("\nTurno %d: J1=%d (meta: %d) | J2=%d (meta: %d)",
-                    i, posicionRealJ1, rutasActuales[0][i],
-                    posicionRealJ2, rutasActuales[1][i]);
+        int turno = 0;
+        int ganador = 0; // 0 = sin ganador, 1 = J1, 2 = J2
 
-            if (i < rutasActuales[0].length) {
-                procesarMovimiento(i, true, rutasActuales, secuencia);
+        // Usamos un while con un límite de seguridad alto (ej. 50) para que puedan
+        // saltar turnos sin que el ciclo se corte antes de tiempo.
+        while (ganador == 0 && !empate[0] && turno < 50) {
+            System.out.printf("\nTurno %d: J1=%d | J2=%d", turno, posicionRealJ1, posicionRealJ2);
+
+            // TURNO JUGADOR 1
+            if (posicionRealJ1 != 16) {
+                procesarMovimiento(turno, true, rutasActuales, secuencia);
+                if (posicionRealJ1 == 16) {
+                    ganador = 1;
+                    break; // Rompemos el ciclo inmediatamente, J1 ganó
+                }
             }
 
-            if (i < rutasActuales[1].length) {
-                procesarMovimiento(i, false, rutasActuales, secuencia);
+            // TURNO JUGADOR 2
+            if (posicionRealJ2 != 13) {
+                procesarMovimiento(turno, false, rutasActuales, secuencia);
+                if (posicionRealJ2 == 13) {
+                    ganador = 2;
+                    break; // Rompemos el ciclo inmediatamente, J2 ganó
+                }
             }
 
-            if (i > 0 && estaBloqueado(posicionRealJ1, rutasActuales[0], i, posicionRealJ2) &&
-                    estaBloqueado(posicionRealJ2, rutasActuales[1], i, posicionRealJ1)) {
+            // Detección de empate (ambos bloqueados)
+            if (turno > 0 && estaBloqueado(posicionRealJ1, rutasActuales[0], turno, posicionRealJ2) &&
+                    estaBloqueado(posicionRealJ2, rutasActuales[1], turno, posicionRealJ1)) {
                 empate[0] = true;
                 System.out.println("\n¡Empate detectado!");
             }
+
+            turno++;
         }
 
-        secuencia.setOnFinished(e -> mostrarResultadoFinal(posicionRealJ1, posicionRealJ2, empate[0]));
+        final int ganadorFinal = ganador;
+        secuencia.setOnFinished(e -> mostrarResultadoFinal(ganadorFinal, empate[0]));
         secuencia.play();
     }
 
@@ -154,34 +169,46 @@ public class TableroGUI extends Application {
         int jugadorIdx = esJugador1 ? 0 : 1;
         int posicionActual = esJugador1 ? posicionRealJ1 : posicionRealJ2;
         int posicionOponente = esJugador1 ? posicionRealJ2 : posicionRealJ1;
-        int siguienteCasilla = rutasActuales[jugadorIdx][turno];
         Circle pieza = esJugador1 ? piezaJugador1 : piezaJugador2;
 
-        if (siguienteCasilla < 1 || siguienteCasilla > 16) {
-            System.out.printf("\n%s intenta moverse a casilla inválida %d", esJugador1 ? "J1" : "J2", siguienteCasilla);
-            buscarRutaAlternativa(turno, esJugador1, rutasActuales, secuencia);
-            return;
+        boolean movimientoRealizado = false;
+
+        // Intentar moverse en la ruta actual (el destino está en turno + 1)
+        if (turno + 1 < rutasActuales[jugadorIdx].length) {
+            // Verificar si la ruta pre-cargada sigue coincidiendo con nuestra posición actual
+            if (rutasActuales[jugadorIdx][turno] == posicionActual) {
+                int siguienteCasilla = rutasActuales[jugadorIdx][turno + 1];
+
+                if (siguienteCasilla >= 1 && siguienteCasilla <= 16 &&
+                        esMovimientoValido(posicionActual, siguienteCasilla) &&
+                        siguienteCasilla != posicionOponente) {
+
+                    secuencia.getChildren().addAll(
+                            crearTransicion(pieza, posicionActual, siguienteCasilla),
+                            new PauseTransition(Duration.seconds(0.5))
+                    );
+                    if (esJugador1) posicionRealJ1 = siguienteCasilla;
+                    else posicionRealJ2 = siguienteCasilla;
+
+                    System.out.printf("\n%s se mueve a %d", esJugador1 ? "J1" : "J2", siguienteCasilla);
+                    movimientoRealizado = true;
+                }
+            }
         }
 
-        if (esMovimientoValido(posicionActual, siguienteCasilla) &&
-                siguienteCasilla != posicionOponente) {
-            secuencia.getChildren().addAll(
-                    crearTransicion(pieza, posicionActual, siguienteCasilla),
-                    new PauseTransition(Duration.seconds(0.5))
-            );
-            if (esJugador1) {
-                posicionRealJ1 = siguienteCasilla;
-            } else {
-                posicionRealJ2 = siguienteCasilla;
+        // Si el movimiento normal falló, intentar desatascar o saltar el turno
+        if (!movimientoRealizado) {
+            boolean encontroRuta = buscarRutaAlternativa(turno, esJugador1, rutasActuales, secuencia);
+            if (!encontroRuta) {
+                System.out.printf("\n%s salta el turno %d por bloqueo", esJugador1 ? "J1" : "J2", turno);
+                // Pausa visual para representar que la pieza perdió el turno
+                secuencia.getChildren().add(new PauseTransition(Duration.seconds(1.0)));
             }
-            System.out.printf("\n%s se mueve a %d", esJugador1 ? "J1" : "J2", siguienteCasilla);
-        } else {
-            buscarRutaAlternativa(turno, esJugador1, rutasActuales, secuencia);
         }
     }
 
-    private void buscarRutaAlternativa(int turno, boolean esJugador1,
-                                       int[][] rutasActuales, SequentialTransition secuencia) {
+    private boolean buscarRutaAlternativa(int turno, boolean esJugador1,
+                                          int[][] rutasActuales, SequentialTransition secuencia) {
         try {
             String archivo = esJugador1 ? "cadenas_ganadoras_jugador1.txt" : "cadenas_ganadoras_jugador2.txt";
             int jugadorIdx = esJugador1 ? 0 : 1;
@@ -193,14 +220,14 @@ public class TableroGUI extends Application {
                 String linea;
                 while ((linea = br.readLine()) != null) {
                     int[] ruta = parsearRuta(linea);
-                    if (ruta.length > turno && ruta[turno] == posicionActual) {
-                        if (ruta.length > turno + 1) {
-                            int siguienteCasilla = ruta[turno + 1];
-                            if (siguienteCasilla >= 1 && siguienteCasilla <= 16 &&
-                                    esMovimientoValido(posicionActual, siguienteCasilla) &&
-                                    siguienteCasilla != posicionOponente) {
-                                rutasValidas.add(ruta);
-                            }
+
+                    // Condición clave: En ESTE turno debe estar en la posición actual ahogada
+                    if (ruta.length > turno + 1 && ruta[turno] == posicionActual) {
+                        int siguienteCasilla = ruta[turno + 1];
+                        if (siguienteCasilla >= 1 && siguienteCasilla <= 16 &&
+                                esMovimientoValido(posicionActual, siguienteCasilla) &&
+                                siguienteCasilla != posicionOponente) {
+                            rutasValidas.add(ruta);
                         }
                     }
                 }
@@ -208,8 +235,7 @@ public class TableroGUI extends Application {
 
             if (!rutasValidas.isEmpty()) {
                 int[] nuevaRuta = rutasValidas.get(new Random().nextInt(rutasValidas.size()));
-                System.arraycopy(nuevaRuta, 0, rutasActuales[jugadorIdx], 0,
-                        Math.min(nuevaRuta.length, rutasActuales[jugadorIdx].length));
+                rutasActuales[jugadorIdx] = nuevaRuta; // Sobrescribimos toda la ruta
 
                 int siguienteCasilla = nuevaRuta[turno + 1];
                 Circle pieza = esJugador1 ? piezaJugador1 : piezaJugador2;
@@ -219,18 +245,16 @@ public class TableroGUI extends Application {
                         new PauseTransition(Duration.seconds(0.5))
                 );
 
-                if (esJugador1) {
-                    posicionRealJ1 = siguienteCasilla;
-                } else {
-                    posicionRealJ2 = siguienteCasilla;
-                }
-            } else {
-                System.out.printf("\n%s no tiene movimientos válidos desde %d",
-                        esJugador1 ? "J1" : "J2", posicionActual);
+                if (esJugador1) posicionRealJ1 = siguienteCasilla;
+                else posicionRealJ2 = siguienteCasilla;
+
+                System.out.printf("\n%s cambia de ruta y se mueve a %d", esJugador1 ? "J1" : "J2", siguienteCasilla);
+                return true; // Se logró desatascar
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false; // Sigue atascado
     }
 
     private int[] parsearRuta(String linea) {
@@ -259,7 +283,7 @@ public class TableroGUI extends Application {
         return (turno < ruta.length - 1) ? Tablero.obtenerColor(ruta[turno + 1]) : 'r';
     }
 
-    private void mostrarResultadoFinal(int posJ1, int posJ2, boolean empate) {
+    private void mostrarResultadoFinal(int ganador, boolean empate) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Fin del juego");
@@ -267,9 +291,9 @@ public class TableroGUI extends Application {
 
             if (empate) {
                 alert.setContentText("¡Empate! Ambos jugadores están bloqueados");
-            } else if (posJ1 == 16) {
+            } else if (ganador == 1) {
                 alert.setContentText("¡Ganó Jugador 1!");
-            } else if (posJ2 == 13) {
+            } else if (ganador == 2) {
                 alert.setContentText("¡Ganó Jugador 2!");
             } else {
                 alert.setContentText("¡Juego terminado sin ganador!");

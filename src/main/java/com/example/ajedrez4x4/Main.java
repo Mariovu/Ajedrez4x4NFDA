@@ -59,7 +59,7 @@ public class Main {
     private static void iniciarJuegoAutomatico() {
         System.out.println("\n--- MODO AUTOMÁTICO ---");
         Random rand = new Random();
-        int longitud = 3 + rand.nextInt(18); // Longitud entre 3 y 15
+        int longitud = 3 + rand.nextInt(18); //
 
         String cadenaJ1 = generarCadenaAleatoria(longitud, true);  // Termina en 'r'
         String cadenaJ2 = generarCadenaAleatoria(longitud, false); // Termina en 'b'

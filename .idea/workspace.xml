@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1b58613-4a8e-4cfd-bd00-2940a5b2e221" name="Changes" comment="Ajedrez No Deterministico Terminado">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cadenas_ganadoras_jugador1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cadenas_ganadoras_jugador1.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cadenas_ganadoras_jugador2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cadenas_ganadoras_jugador2.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/Estado.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/Estado.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/ExploradorRutas.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/ExploradorRutas.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/TableroGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ajedrez4x4/TableroGUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todos_los_caminos_jugador1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todos_los_caminos_jugador1.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todos_los_caminos_jugador2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todos_los_caminos_jugador2.txt" afterDir="false" />
@@ -41,7 +42,8 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "last_opened_file_path": "E:/Program Files/Seguro/JavaProyectos/Ajedrez4x4"
+    "last_opened_file_path": "E:/Program Files/Seguro/JavaProyectos/Ajedrez4x4",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
   <component name="RunManager" selected="Application.Main">

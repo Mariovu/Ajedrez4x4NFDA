@@ -13,6 +13,7 @@ public class ExploradorRutas {
         procesarRutasNoDeterministas(cadena, archivoSalida, 4);
     }
 
+    // Procesa las rutas no deterministas para un jugador dado
     private static void procesarRutasNoDeterministas(String cadena, String archivoSalida, int inicio) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivoSalida))) {
             Queue<Estado> cola = new LinkedList<>();
