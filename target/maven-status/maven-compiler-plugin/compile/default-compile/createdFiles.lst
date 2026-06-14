@@ -1,0 +1,10 @@
+com\example\ajedrez4x4\TableroGUI.class
+com\example\ajedrez4x4\ArchivosSalida.class
+com\example\ajedrez4x4\ExploradorRutas.class
+com\example\ajedrez4x4\Movimientos.class
+com\example\ajedrez4x4\Tablero.class
+com\example\ajedrez4x4\Launcher.class
+com\example\ajedrez4x4\Estado.class
+com\example\ajedrez4x4\Animaciones.class
+com\example\ajedrez4x4\AutomataGrafico.class
+com\example\ajedrez4x4\Main.class
