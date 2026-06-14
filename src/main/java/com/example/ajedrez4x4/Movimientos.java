@@ -9,15 +9,17 @@ public class Movimientos {
 
     public static List<Integer> movimientosValidos(int casillaActual, char colorSiguiente, int casillaOcupada) {
         List<Integer> movimientos = new ArrayList<>();
-        int fila = (casillaActual - 1) / 4;
-        int columna = (casillaActual - 1) % 4;
+        // CAMBIO: Ahora dividimos y sacamos módulo entre 10
+        int fila = (casillaActual - 1) / 10;
+        int columna = (casillaActual - 1) % 10;
 
         for (int i = 0; i < 8; i++) {
             int nuevaFila = fila + FILAS[i];
             int nuevaColumna = columna + COLUMNAS[i];
 
-            if (nuevaFila >= 0 && nuevaFila < 4 && nuevaColumna >= 0 && nuevaColumna < 4) {
-                int nuevaCasilla = nuevaFila * 4 + nuevaColumna + 1;
+            // CAMBIO: El límite superior ahora es 10 en lugar de 4
+            if (nuevaFila >= 0 && nuevaFila < 10 && nuevaColumna >= 0 && nuevaColumna < 10) {
+                int nuevaCasilla = nuevaFila * 10 + nuevaColumna + 1;
                 if (nuevaCasilla != casillaOcupada && Tablero.obtenerColor(nuevaCasilla) == colorSiguiente) {
                     movimientos.add(nuevaCasilla);
                 }
